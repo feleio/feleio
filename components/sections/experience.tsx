@@ -46,7 +46,7 @@ export function Experience() {
   return (
     <section className="mx-auto max-w-[800px] px-6 py-16 md:py-24">
       <div className="mb-8 h-px w-10 bg-accent-ice opacity-40" />
-      <p className="mb-8 text-[11px] uppercase tracking-[0.25em] text-accent-ice">
+      <p className="mb-8 text-xs uppercase tracking-[0.25em] text-accent-ice">
         Experience
       </p>
       <div className="flex flex-col">
@@ -55,18 +55,18 @@ export function Experience() {
             key={exp.date}
             className="flex flex-col gap-2 border-b border-card-border py-6 last:border-b-0 md:flex-row md:gap-6"
           >
-            <div className="min-w-[90px] text-[11px] tabular-nums text-accent-ice md:pt-1">
+            <div className="min-w-[100px] text-xs tabular-nums text-accent-ice md:pt-1">
               {exp.date}
             </div>
             <div className="flex-1">
-              <div className="text-[15px] font-semibold text-text-primary">
+              <div className="text-base font-semibold text-text-primary">
                 {exp.title}
               </div>
-              <div className="text-[15px] font-semibold text-[#ddd]">
+              <div className="text-base font-semibold text-[#ddd]">
                 {exp.company}
               </div>
               {exp.bullets.length > 0 && (
-                <ul className="mt-2 list-disc pl-4 text-[13px] leading-[1.8] text-text-muted">
+                <ul className="mt-2 list-disc pl-4 text-sm leading-[1.8] text-text-muted">
                   {exp.bullets.map((bullet) => (
                     <li key={bullet} className="mb-1">
                       {bullet}
@@ -79,7 +79,7 @@ export function Experience() {
                   {exp.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded border border-accent-border bg-accent-dim px-2 py-0.5 text-[11px] text-accent-ice"
+                      className="rounded border border-accent-border bg-accent-dim px-2 py-0.5 text-xs text-accent-ice"
                     >
                       {tag}
                     </span>

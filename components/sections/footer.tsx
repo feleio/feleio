@@ -8,7 +8,7 @@ export function Footer() {
           href="https://www.linkedin.com/in/chun-lok-ling-195a923b"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-lg border border-card-border px-4 py-2 text-[13px] text-text-secondary transition-colors hover:border-accent-ice hover:text-accent-ice"
+          className="flex items-center gap-1.5 rounded-lg border border-card-border px-4 py-2 text-sm text-text-secondary transition-colors hover:border-accent-ice hover:text-accent-ice"
         >
           <svg
             width="16"
@@ -30,7 +30,7 @@ export function Footer() {
           href="https://github.com/feleio"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-lg border border-card-border px-4 py-2 text-[13px] text-text-secondary transition-colors hover:border-accent-ice hover:text-accent-ice"
+          className="flex items-center gap-1.5 rounded-lg border border-card-border px-4 py-2 text-sm text-text-secondary transition-colors hover:border-accent-ice hover:text-accent-ice"
         >
           <svg
             width="16"
@@ -48,7 +48,7 @@ export function Footer() {
           GitHub
         </a>
       </div>
-      <div className="text-[11px] text-text-subtle">
+      <div className="text-xs text-text-subtle">
         {new Date().getFullYear()} Chun Lok Ling
       </div>
     </footer>
