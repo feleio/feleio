@@ -1,21 +1,24 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Sora, IBM_Plex_Mono } from "next/font/google"
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sora = Sora({
   subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
 })
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
   title: "Chun Lok Ling — Senior Software Engineer",
   description:
-    "Distributed Systems · AI & Agentic Engineering · High-Performance FinTech",
+    "Senior Software Engineer at Digital Asset. 15+ years building distributed ledgers and high-performance financial systems — a force-directed view of a 15-year topology.",
 }
 
 export default function RootLayout({
@@ -24,10 +27,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-bg-site antialiased`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${sora.variable} ${plexMono.variable} antialiased`}>
+        {/* Mark JS as active before paint so the reveal system never flashes. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js')",
+          }}
+        />
         {children}
       </body>
     </html>

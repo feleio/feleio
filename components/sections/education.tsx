@@ -1,42 +1,40 @@
 const education = [
   {
-    date: "2007 — 2010",
-    school: "The Hong Kong University of Science and Technology",
-    degree: "Bachelor's Degree, Computer Science · First Class Honours",
+    year: "2007 — 2010",
+    inst: "The Hong Kong University of Science and Technology",
+    detail: "Bachelor's Degree, Computer Science",
+    highlight: "· First Class Honours",
   },
   {
-    date: "2009",
-    school: "University of Southampton",
-    degree: "Exchange Programme, Computer Science",
+    year: "2009",
+    inst: "University of Southampton",
+    detail: "Exchange Programme, Computer Science",
+    highlight: "",
   },
 ]
 
 export function Education() {
   return (
-    <section className="mx-auto max-w-[800px] px-6 py-16 md:py-24">
-      <div className="mb-8 h-px w-10 bg-accent-ice opacity-40" />
-      <p className="mb-8 text-xs uppercase tracking-[0.25em] text-accent-ice">
-        Education
-      </p>
-      <div className="flex flex-col">
-        {education.map((edu) => (
-          <div
-            key={edu.school}
-            className="flex flex-col gap-2 border-b border-card-border py-5 last:border-b-0 md:flex-row md:gap-6"
-          >
-            <div className="min-w-[100px] text-xs text-accent-ice md:pt-1">
-              {edu.date}
-            </div>
-            <div>
-              <div className="text-base font-semibold text-text-primary">
-                {edu.school}
-              </div>
-              <div className="text-sm text-text-secondary">
-                {edu.degree}
+    <section className="band band--alt" id="education" aria-labelledby="edu-label">
+      <div className="wrap">
+        <p className="label" id="edu-label">
+          <span className="node-glyph" aria-hidden="true" />
+          {"// EDUCATION"}
+        </p>
+        <div className="edu">
+          {education.map((edu) => (
+            <div className="edu__row reveal" key={edu.inst}>
+              <span className="edu__year">{edu.year}</span>
+              <div>
+                <h3 className="edu__inst">{edu.inst}</h3>
+                <p className="edu__detail">
+                  {edu.detail}
+                  {edu.highlight && <span className="hl"> {edu.highlight}</span>}
+                </p>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )

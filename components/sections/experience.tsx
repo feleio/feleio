@@ -1,8 +1,9 @@
 const experiences = [
   {
-    date: "2022 — Present",
+    years: "2022 — Present",
     title: "Senior Software Engineer",
-    company: "Digital Asset · Canton Network Utility Team",
+    org: "Digital Asset",
+    team: "Canton Network Utility Team",
     bullets: [
       "Drive development of mission-critical backend utilities for institutional-grade DLT",
       "Built high-performance infrastructure using Scala and Daml",
@@ -12,9 +13,10 @@ const experiences = [
     tags: ["Scala", "Daml", "DLT"],
   },
   {
-    date: "2016 — 2022",
+    years: "2016 — 2022",
     title: "Senior Software Engineer",
-    company: "Babylon Health · AI Engineering",
+    org: "Babylon Health",
+    team: "AI Engineering",
     bullets: [
       "Designed scalable Scala and Akka-HTTP microservices for a global clinical platform",
       "Managed full-lifecycle deployments using Docker and Kubernetes",
@@ -24,16 +26,18 @@ const experiences = [
     tags: ["Scala", "Akka-HTTP", "Java", "Docker", "Kubernetes"],
   },
   {
-    date: "2015 — 2016",
+    years: "2015 — 2016",
     title: "Senior Software Engineer",
-    company: "Amber Road",
-    bullets: [],
-    tags: [],
+    org: "Amber Road",
+    team: "",
+    bullets: [] as string[],
+    tags: [] as string[],
   },
   {
-    date: "2010 — 2014",
+    years: "2010 — 2014",
     title: "Software Engineer",
-    company: "Thomson Reuters",
+    org: "Thomson Reuters",
+    team: "",
     bullets: [
       "Developed core components for the Global Market Data Network using C++",
       "Contributed to 14 major project releases through high-speed, reliable execution",
@@ -44,51 +48,45 @@ const experiences = [
 
 export function Experience() {
   return (
-    <section className="mx-auto max-w-[800px] px-6 py-16 md:py-24">
-      <div className="mb-8 h-px w-10 bg-accent-ice opacity-40" />
-      <p className="mb-8 text-xs uppercase tracking-[0.25em] text-accent-ice">
-        Experience
-      </p>
-      <div className="flex flex-col">
-        {experiences.map((exp) => (
-          <div
-            key={exp.date}
-            className="flex flex-col gap-2 border-b border-card-border py-6 last:border-b-0 md:flex-row md:gap-6"
-          >
-            <div className="min-w-[100px] text-xs tabular-nums text-accent-ice md:pt-1">
-              {exp.date}
-            </div>
-            <div className="flex-1">
-              <div className="text-base font-semibold text-text-primary">
-                {exp.title}
+    <section className="band band--alt" id="experience" aria-labelledby="exp-label">
+      <div className="wrap">
+        <p className="label" id="exp-label">
+          <span className="node-glyph" aria-hidden="true" />
+          {"// EXPERIENCE"}
+        </p>
+        <div className="roles">
+          {experiences.map((exp, i) => (
+            <article className="role reveal" key={exp.org}>
+              <div className="role__meta">
+                <span className="role__years">{exp.years}</span>
+                <span className="role__co">
+                  node · 0x0{i + 1}
+                </span>
               </div>
-              <div className="text-base font-semibold text-[#ddd]">
-                {exp.company}
+              <div className="role__body">
+                <h3 className="role__title">{exp.title}</h3>
+                <p className="role__org">{exp.org}</p>
+                {exp.team && <p className="role__team">{exp.team}</p>}
+                {exp.bullets.length > 0 && (
+                  <ul className="role__bullets">
+                    {exp.bullets.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                )}
+                {exp.tags.length > 0 && (
+                  <div className="role__tags" aria-label="Stack">
+                    {exp.tags.map((t) => (
+                      <span className="tag" key={t}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-              {exp.bullets.length > 0 && (
-                <ul className="mt-2 list-disc pl-4 text-sm leading-[1.8] text-text-muted">
-                  {exp.bullets.map((bullet) => (
-                    <li key={bullet} className="mb-1">
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {exp.tags.length > 0 && (
-                <div className="mt-2.5 flex flex-wrap gap-1.5">
-                  {exp.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded border border-accent-border bg-accent-dim px-2 py-0.5 text-xs text-accent-ice"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   )

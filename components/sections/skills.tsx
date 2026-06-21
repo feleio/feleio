@@ -15,30 +15,29 @@ const skillGroups = [
 
 export function Skills() {
   return (
-    <section className="mx-auto max-w-[800px] px-6 py-16 md:py-24">
-      <div className="mb-8 h-px w-10 bg-accent-ice opacity-40" />
-      <p className="mb-8 text-xs uppercase tracking-[0.25em] text-accent-ice">
-        Skills
-      </p>
-      <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
-        {skillGroups.map((group) => (
-          <div key={group.title}>
-            <h3 className="mb-3 text-sm font-semibold text-text-primary">
-              {group.title}
-            </h3>
-            <div className="flex flex-col gap-2">
-              {group.skills.map((skill) => (
-                <div
-                  key={skill}
-                  className="flex items-center gap-2 text-sm text-text-secondary"
-                >
-                  <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent-ice" />
-                  {skill}
-                </div>
-              ))}
+    <section className="band" id="stack" aria-labelledby="stack-label">
+      <div className="wrap">
+        <p className="label" id="stack-label">
+          <span className="node-glyph" aria-hidden="true" />
+          {"// STACK"}
+        </p>
+        <div className="clusters">
+          {skillGroups.map((group) => (
+            <div className="cluster reveal" key={group.title}>
+              <p className="cluster__head">
+                <span className="core" aria-hidden="true" />
+                {group.title}
+              </p>
+              <div className="cluster__nodes">
+                {group.skills.map((skill) => (
+                  <span className="skill-node" key={skill}>
+                    {skill}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )
