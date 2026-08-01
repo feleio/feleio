@@ -1,5 +1,6 @@
 const experiences = [
   {
+    id: "da",
     years: "2022 — Present",
     title: "Senior Software Engineer",
     org: "Digital Asset",
@@ -13,6 +14,7 @@ const experiences = [
     tags: ["Scala", "Daml", "DLT"],
   },
   {
+    id: "bh",
     years: "2016 — 2022",
     title: "Senior Software Engineer",
     org: "Babylon Health",
@@ -26,6 +28,7 @@ const experiences = [
     tags: ["Scala", "Akka-HTTP", "Java", "Docker", "Kubernetes"],
   },
   {
+    id: "ar",
     years: "2015 — 2016",
     title: "Senior Software Engineer",
     org: "Amber Road",
@@ -34,6 +37,7 @@ const experiences = [
     tags: [] as string[],
   },
   {
+    id: "tr",
     years: "2010 — 2014",
     title: "Software Engineer",
     org: "Thomson Reuters",
@@ -50,13 +54,13 @@ export function Experience() {
   return (
     <section className="band band--alt" id="experience" aria-labelledby="exp-label">
       <div className="wrap">
-        <p className="label" id="exp-label">
+        <p className="label reveal" id="exp-label">
           <span className="node-glyph" aria-hidden="true" />
           {"// EXPERIENCE"}
         </p>
         <div className="roles">
           {experiences.map((exp, i) => (
-            <article className="role reveal" key={exp.org}>
+            <article className="role reveal" key={exp.org} id={`role-${exp.id}`}>
               <div className="role__meta">
                 <span className="role__years">{exp.years}</span>
                 <span className="role__co">

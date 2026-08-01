@@ -17,7 +17,7 @@ export function Skills() {
   return (
     <section className="band" id="stack" aria-labelledby="stack-label">
       <div className="wrap">
-        <p className="label" id="stack-label">
+        <p className="label reveal" id="stack-label">
           <span className="node-glyph" aria-hidden="true" />
           {"// STACK"}
         </p>

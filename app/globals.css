@@ -196,7 +196,31 @@ body::before {
     radial-gradient(1100px 1100px at 50% 120%, rgba(10, 11, 18, 0.0), var(--bg-2) 90%);
 }
 
+/* Fine grain kills gradient banding and gives the dark surface some tooth. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 ::selection { background: rgba(124, 140, 255, 0.32); color: #fff; }
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hair) var(--bg-2);
+}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-2); }
+::-webkit-scrollbar-thumb {
+  background: var(--hair);
+  border-radius: 6px;
+  border: 2px solid var(--bg-2);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--t-dim); }
 
 :focus-visible {
   outline: 2px solid var(--iris);
@@ -230,11 +254,39 @@ body::before {
 .brand { color: var(--t-text); font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
 .brand .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--iris); box-shadow: 0 0 10px var(--iris); }
 .status { display: flex; align-items: center; gap: 16px; color: var(--t-muted); }
-.legend { display: inline-flex; align-items: center; gap: 14px; }
-.legend span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-.legend .g { width: 8px; height: 8px; border-radius: 50%; flex: none; }
-.g--role  { background: var(--iris); box-shadow: 0 0 8px rgba(124, 140, 255, 0.7); }
-.g--skill { background: transparent; border: 1.5px solid var(--teal); }
+.topnav { display: flex; align-items: center; gap: clamp(14px, 2.5vw, 26px); }
+.topnav a {
+  position: relative;
+  color: var(--t-dim);
+  text-decoration: none;
+  padding: 4px 0;
+  letter-spacing: 0.08em;
+  transition: color .25s ease;
+}
+.topnav a:hover { color: var(--t-text); }
+.topnav a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 100%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--iris), var(--teal));
+  transition: right .3s cubic-bezier(.22,.61,.36,1);
+}
+.topnav a.is-active { color: var(--t-text); }
+.topnav a.is-active::after { right: 0; }
+/* Scroll progress hairline, driven by the header script. */
+.sync {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--iris), var(--teal));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  box-shadow: 0 0 8px rgba(55, 224, 200, 0.5);
+}
+@media (max-width: 680px) { .topnav { display: none; } }
 .nodes-count { color: var(--t-text); }
 .nodes-count b { color: var(--teal); font-weight: 500; }
 .online { display: inline-flex; align-items: center; gap: 7px; }
@@ -244,7 +296,6 @@ body::before {
   animation: t-blink 2.4s ease-in-out infinite;
 }
 @keyframes t-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
-@media (max-width: 640px) { .legend { display: none; } }
 
 /* ============ HERO / GRAPH ============ */
 .hero {
@@ -298,7 +349,13 @@ body::before {
   color: var(--t-text);
   text-shadow: 0 4px 40px rgba(10, 11, 18, 0.85);
 }
-.hero h1 .accent { color: var(--iris); }
+.hero h1 .accent {
+  background: linear-gradient(94deg, var(--iris) 10%, var(--teal) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+}
 .hero__role {
   font-family: var(--mono);
   font-size: clamp(0.95rem, 2vw, 1.18rem);
@@ -345,6 +402,23 @@ body::before {
 @keyframes t-cue { 0%, 100% { opacity: 0.3; transform: scaleY(0.7); } 50% { opacity: 1; transform: scaleY(1); } }
 @media (max-width: 720px) { .scroll-cue { display: none; } }
 
+/* Load choreography: hero copy rises in sequence while the graph flies in. */
+.js .hero__eyebrow,
+.js .hero h1,
+.js .hero__role,
+.js .hero__tagline,
+.js .hero__cap {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: t-rise 0.9s cubic-bezier(.22,.61,.36,1) forwards;
+}
+.js .hero__eyebrow { animation-delay: 0.05s; }
+.js .hero h1 { animation-delay: 0.16s; }
+.js .hero__role { animation-delay: 0.34s; }
+.js .hero__tagline { animation-delay: 0.44s; }
+.js .hero__cap { animation-delay: 0.6s; }
+@keyframes t-rise { to { opacity: 1; transform: none; } }
+
 /* Mobile: text occupies the top, the graph gets its own zone below.
    A top scrim keeps the headline legible over any nearby nodes. */
 @media (max-width: 720px) {
@@ -364,7 +438,7 @@ body::before {
 }
 
 /* ============ SECTIONS ============ */
-section { position: relative; z-index: 2; }
+section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 .band { padding: clamp(64px, 11vw, 130px) 0; }
 .band--alt { background: linear-gradient(180deg, transparent, rgba(18, 20, 31, 0.5) 12%, rgba(18, 20, 31, 0.5) 88%, transparent); }
 
@@ -390,6 +464,13 @@ section { position: relative; z-index: 2; }
   box-shadow: 0 0 10px rgba(124, 140, 255, 0.65);
   flex: none;
 }
+/* The hairline draws itself as the label scrolls into view. */
+.js .label::after {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 1.1s cubic-bezier(.22,.61,.36,1) .15s;
+}
+.js .label.in::after { transform: scaleX(1); }
 
 /* ---- ABOUT ---- */
 .about__grid {
@@ -454,7 +535,17 @@ section { position: relative; z-index: 2; }
 }
 .role:hover {
   border-color: var(--iris-line);
+  transform: translateY(-3px);
   box-shadow: 0 0 0 1px var(--iris-soft), 0 24px 60px -30px rgba(124, 140, 255, 0.4);
+}
+.role { scroll-margin-top: 84px; }
+/* Flash when reached by clicking its node in the hero graph. */
+.role.is-target { animation: t-target 1.6s ease-out; }
+@keyframes t-target {
+  0%, 35% {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 1px var(--teal-soft), 0 0 44px -8px rgba(55, 224, 200, 0.45);
+  }
 }
 .role__meta { position: relative; }
 .role__meta::before {
@@ -651,6 +742,7 @@ section { position: relative; z-index: 2; }
 .footer__links a:hover { color: var(--teal); }
 .footer__links svg { width: 16px; height: 16px; flex: none; }
 .footer__sig { font-family: var(--mono); font-size: 12.5px; color: var(--t-dim); letter-spacing: 0.04em; }
+.footer__sig .prompt { color: var(--teal); }
 
 /* ============ SCROLL REVEAL (progressive enhancement) ============ */
 .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1); }
@@ -661,5 +753,12 @@ section { position: relative; z-index: 2; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js .reveal, .js .tag { opacity: 1 !important; transform: none !important; transition: none; }
+  .js .hero__eyebrow, .js .hero h1, .js .hero__role, .js .hero__tagline, .js .hero__cap {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .js .label::after { transform: none; transition: none; }
+  .role.is-target { animation: none; }
   .online .pulse, .scroll-cue .bar { animation: none; }
 }

@@ -8,7 +8,7 @@ export function About() {
   return (
     <section className="band" id="profile" aria-labelledby="profile-label">
       <div className="wrap">
-        <p className="label" id="profile-label">
+        <p className="label reveal" id="profile-label">
           <span className="node-glyph" aria-hidden="true" />
           {"// PROFILE"}
         </p>

@@ -12,6 +12,10 @@ import { useEffect, useRef } from "react"
  * On narrow screens the graph is confined to its own band BELOW the hero text
  * and role labels stay visible, so it reads as an intentional constellation
  * rather than scattered dots over the headline.
+ *
+ * Once settled, packets travel the edges as live traffic; a packet arriving at
+ * a node heats it, briefly lighting its label and edges teal. Role nodes are
+ * clickable and jump to the matching experience card.
  */
 export function TopologyGraph() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -70,6 +74,12 @@ export function TopologyGraph() {
         { id: "AR", label: "Amber Road", skills: [] as string[] },
         { id: "TR", label: "Thomson Reuters", skills: ["C++"] },
       ],
+    }
+    const roleAnchor: Record<string, string> = {
+      DA: "role-da",
+      BH: "role-bh",
+      AR: "role-ar",
+      TR: "role-tr",
     }
 
     const nodes: GNode[] = []
@@ -199,6 +209,84 @@ export function TopologyGraph() {
     let corePulse = 0
     let corePulseFired = false
     let time = 0
+
+    // Live traffic: packets travel edges, heat whatever node they arrive at.
+    interface Packet {
+      e: GEdge
+      t: number
+      v: number
+      out: boolean
+    }
+    const packets: Packet[] = []
+    let packetClock = 0
+    let packetSeed = 0.37
+
+    function rand() {
+      // Deterministic-ish LCG so traffic feels steady, not jittery.
+      packetSeed = (packetSeed * 9301 + 49297) % 233280
+      return packetSeed / 233280
+    }
+
+    function spawnPacket() {
+      if (!edges.length) return
+      const e = edges[(rand() * edges.length) | 0]
+      if (e.t < 1) return
+      packets.push({
+        e,
+        t: 0,
+        v: 0.55 + rand() * 0.5,
+        out: rand() > 0.3,
+      })
+    }
+
+    function stepPackets(dt: number) {
+      packetClock += dt
+      if (packetClock > 640 && packets.length < 14) {
+        packetClock = 0
+        spawnPacket()
+      }
+      for (let i = packets.length - 1; i >= 0; i--) {
+        const p = packets[i]
+        p.t += (dt / 1000) * p.v
+        if (p.t >= 1) {
+          const target = p.out ? p.e.b : p.e.a
+          target.heat = Math.min(1, target.heat + 0.5)
+          packets.splice(i, 1)
+        }
+      }
+    }
+
+    function drawPackets() {
+      if (!ctx) return
+      for (let i = 0; i < packets.length; i++) {
+        const p = packets[i]
+        const from = p.out ? p.e.a : p.e.b
+        const to = p.out ? p.e.b : p.e.a
+        const x = from.x + (to.x - from.x) * p.t
+        const y = from.y + (to.y - from.y) * p.t
+        // Short trailing comet behind the packet.
+        const tt = Math.max(0, p.t - 0.12)
+        const tx2 = from.x + (to.x - from.x) * tt
+        const ty2 = from.y + (to.y - from.y) * tt
+        const fade = Math.min(1, p.t * 6, (1 - p.t) * 6)
+        const grad = ctx.createLinearGradient(tx2, ty2, x, y)
+        grad.addColorStop(0, rgba(TEAL, 0))
+        grad.addColorStop(1, rgba(TEAL, 0.55 * fade))
+        ctx.beginPath()
+        ctx.moveTo(tx2, ty2)
+        ctx.lineTo(x, y)
+        ctx.strokeStyle = grad
+        ctx.lineWidth = 1.4
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.arc(x, y, 1.8, 0, Math.PI * 2)
+        ctx.fillStyle = rgba(TEAL, 0.95 * fade)
+        ctx.shadowColor = rgba(TEAL, 0.8)
+        ctx.shadowBlur = 7
+        ctx.fill()
+        ctx.shadowBlur = 0
+      }
+    }
 
     function simulate() {
       const k = 0.0009
@@ -330,6 +418,8 @@ export function TopologyGraph() {
         ctx.shadowBlur = 0
       }
 
+      drawPackets()
+
       const showSkillLabels = W > 560
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i]
@@ -406,12 +496,44 @@ export function TopologyGraph() {
       }
     }
 
+    function hitNode(x: number, y: number): GNode | null {
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i]
+        if (n.type === "skill") continue
+        const dx = n.x - x
+        const dy = n.y - y
+        if (dx * dx + dy * dy < 18 * 18) return n
+      }
+      return null
+    }
+
     function onMove(clientX: number, clientY: number) {
       if (!canvas) return
       const rect = canvas.getBoundingClientRect()
       mouse.x = clientX - rect.left
       mouse.y = clientY - rect.top
       mouse.active = true
+      canvas.style.cursor = hitNode(mouse.x, mouse.y) ? "pointer" : ""
+    }
+    const onClick = (ev: MouseEvent) => {
+      if (!canvas) return
+      const rect = canvas.getBoundingClientRect()
+      const n = hitNode(ev.clientX - rect.left, ev.clientY - rect.top)
+      if (!n) return
+      n.heat = 1
+      const behavior: ScrollBehavior = reduceMotion ? "auto" : "smooth"
+      if (n.type === "core") {
+        window.scrollTo({ top: 0, behavior })
+        return
+      }
+      const target = document.getElementById(roleAnchor[n.key] ?? "")
+      if (target) {
+        target.scrollIntoView({ behavior, block: "center" })
+        target.classList.remove("is-target")
+        // Restart the highlight animation even on repeat clicks.
+        void (target as HTMLElement).offsetWidth
+        target.classList.add("is-target")
+      }
     }
     const onMouseMove = (ev: MouseEvent) => onMove(ev.clientX, ev.clientY)
     const onMouseLeave = () => {
@@ -425,6 +547,7 @@ export function TopologyGraph() {
     const onTouchEnd = () => {
       mouse.active = false
     }
+    canvas.addEventListener("click", onClick)
     if (!reduceMotion) {
       canvas.addEventListener("mousemove", onMouseMove)
       canvas.addEventListener("mouseleave", onMouseLeave)
@@ -444,6 +567,7 @@ export function TopologyGraph() {
         corePulseFired = true
       }
       if (corePulse > 0) corePulse = Math.max(0, corePulse - dt / 700)
+      if (settle >= 1) stepPackets(dt)
       const steps = settle < 1 ? 2 : 1
       for (let s = 0; s < steps; s++) simulate()
       draw()
@@ -486,6 +610,7 @@ export function TopologyGraph() {
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener("resize", onResize)
+      canvas.removeEventListener("click", onClick)
       canvas.removeEventListener("mousemove", onMouseMove)
       canvas.removeEventListener("mouseleave", onMouseLeave)
       canvas.removeEventListener("touchmove", onTouchMove)
