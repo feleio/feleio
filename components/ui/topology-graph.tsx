@@ -3,6 +3,18 @@
 import { useEffect, useRef } from "react"
 
 import { roles } from "@/lib/content"
+import {
+  IRIS,
+  NARROW_BP,
+  TEAL,
+  TEXT,
+  createRand,
+  drawPill as drawPillBase,
+  getMonoFamily,
+  prefersReducedMotion,
+  rgba,
+  sizeCanvas,
+} from "@/lib/graph"
 
 /**
  * The signature: a force-directed view of a 15-year career.
@@ -28,20 +40,8 @@ export function TopologyGraph() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    const reduceMotion =
-      typeof window.matchMedia === "function" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-
-    const IRIS: [number, number, number] = [124, 140, 255]
-    const TEAL: [number, number, number] = [55, 224, 200]
-    const TEXT: [number, number, number] = [232, 234, 242]
-    const rgba = (c: [number, number, number], a: number) =>
-      `rgba(${c[0]},${c[1]},${c[2]},${a})`
-
-    const monoFamily =
-      getComputedStyle(document.body)
-        .getPropertyValue("--font-plex-mono")
-        .trim() || "ui-monospace"
+    const reduceMotion = prefersReducedMotion()
+    const monoFamily = getMonoFamily()
 
     type NodeType = "core" | "role" | "skill"
     interface GNode {
@@ -114,7 +114,6 @@ export function TopologyGraph() {
 
     let W = 0
     let H = 0
-    let DPR = 1
     let cx = 0
     let cy = 0
     let layoutScale = 1
@@ -126,15 +125,9 @@ export function TopologyGraph() {
 
     function resize() {
       if (!canvas || !ctx) return
-      const rect = canvas.getBoundingClientRect()
-      W = rect.width
-      H = rect.height
-      DPR = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width = Math.round(W * DPR)
-      canvas.height = Math.round(H * DPR)
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0)
+      ;({ W, H } = sizeCanvas(canvas, ctx))
 
-      narrow = W <= 720
+      narrow = W <= NARROW_BP
       if (narrow) {
         // Confine the graph to a band beneath the hero copy. The copy's real
         // bottom edge sets the top bound — a fixed fraction breaks whenever
@@ -254,13 +247,7 @@ export function TopologyGraph() {
     }
     const packets: Packet[] = []
     let packetClock = 0
-    let packetSeed = 0.37
-
-    function rand() {
-      // Deterministic-ish LCG so traffic feels steady, not jittery.
-      packetSeed = (packetSeed * 9301 + 49297) % 233280
-      return packetSeed / 233280
-    }
+    const rand = createRand(0.37)
 
     function spawnPacket() {
       const pool = hideSkills
@@ -463,19 +450,8 @@ export function TopologyGraph() {
 
       drawPackets()
 
-      // Soft dark pill behind a label so edges never strike through the text.
-      const drawPill = (lx: number, ly: number, tw: number, fs: number) => {
-        const pad = 7
-        const h = fs + 8
-        ctx.fillStyle = "rgba(8, 9, 15, 0.78)"
-        ctx.beginPath()
-        if (typeof ctx.roundRect === "function") {
-          ctx.roundRect(lx - pad, ly - h / 2, tw + pad * 2, h, h / 2)
-        } else {
-          ctx.rect(lx - pad, ly - h / 2, tw + pad * 2, h)
-        }
-        ctx.fill()
-      }
+      const drawPill = (lx: number, ly: number, tw: number, fs: number) =>
+        drawPillBase(ctx, lx, ly, tw, fs)
 
       const showSkillLabels = W > 560
       for (let i = 0; i < nodes.length; i++) {

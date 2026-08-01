@@ -85,6 +85,32 @@ export const roles: Role[] = [
   },
 ]
 
+/**
+ * graphSkills use short display labels; skillGroups use full names. This map
+ * reconciles the two so derived views (the stack graph) can join them.
+ */
+export const SKILL_ALIASES: Record<string, string> = {
+  K8s: "Kubernetes",
+}
+
+/**
+ * Canonical skill name -> role ids that used it, derived from graphSkills so
+ * content stays single-sourced. Skills with no entry simply have no company
+ * edge in the stack graph.
+ */
+// TODO(chun): Amber Road has no graphSkills, so it gets no node in the stack
+// graph — add its real stack to restore it there.
+export const skillUsage: Record<string, Role["id"][]> = (() => {
+  const usage: Record<string, Role["id"][]> = {}
+  for (const role of roles) {
+    for (const s of role.graphSkills) {
+      const name = SKILL_ALIASES[s] ?? s
+      ;(usage[name] ??= []).push(role.id)
+    }
+  }
+  return usage
+})()
+
 export const readouts = [
   { fig: 15, em: "+", cap: "Years Experience" },
   { fig: 3, em: "", cap: "Industries" },

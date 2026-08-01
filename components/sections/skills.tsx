@@ -1,3 +1,4 @@
+import { StackGraph } from "@/components/ui/stack-graph"
 import { skillGroups } from "@/lib/content"
 
 export function Skills() {
@@ -8,7 +9,11 @@ export function Skills() {
           <span className="node-glyph" aria-hidden="true" />
           {"// STACK"}
         </p>
-        <div className="clusters">
+        <StackGraph />
+        {/* Chip clusters double as the canvas fallback: shown below the
+            graph breakpoint, visually hidden (but AT/keyboard readable)
+            above it. */}
+        <div className="clusters clusters--fallback">
           {skillGroups.map((group) => (
             <div className="cluster reveal" key={group.title}>
               <p className="cluster__head">
