@@ -153,7 +153,7 @@
   --hair-soft: #191B2A;
   --t-text:    #E8EAF2;
   --t-muted:   #888EA8;
-  --t-dim:     #5A6080;
+  --t-dim:     #767D9E; /* ≈4.8:1 on --bg — AA for the 11-12px mono text */
 
   --iris:      #7C8CFF;
   --iris-soft: rgba(124, 140, 255, 0.14);
@@ -230,6 +230,23 @@ html {
 
 .wrap { max-width: var(--maxw); margin: 0 auto; padding-inline: var(--pad); }
 
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  transform: translateY(-300%);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--t-text);
+  background: var(--panel);
+  border: 1px solid var(--iris);
+  border-radius: 8px;
+  padding: 10px 16px;
+  text-decoration: none;
+}
+.skip-link:focus-visible { transform: none; }
+
 /* ============ TOP BAR ============ */
 .topbar {
   position: sticky;
@@ -286,7 +303,34 @@ html {
   transform-origin: 0 50%;
   box-shadow: 0 0 8px rgba(55, 224, 200, 0.5);
 }
-@media (max-width: 680px) { .topnav { display: none; } }
+/* Mobile: two-row header — brand + status up top, nav as a scrollable pill
+   strip beneath. No toggle button: the header height stays static, so the
+   hero band measurement never desyncs. */
+@media (max-width: 680px) {
+  .topbar__inner { flex-wrap: wrap; row-gap: 9px; padding-block: 10px; }
+  .nodes-count { display: none; }
+  .topnav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+    gap: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .topnav::-webkit-scrollbar { display: none; }
+  .topnav a {
+    flex: none;
+    padding: 5px 13px;
+    border: 1px solid var(--hair);
+    border-radius: 100px;
+  }
+  .topnav a::after { display: none; }
+  .topnav a.is-active {
+    border-color: var(--iris);
+    background: var(--iris-soft);
+  }
+}
 .nodes-count { color: var(--t-text); }
 .nodes-count b { color: var(--teal); font-weight: 500; }
 .online { display: inline-flex; align-items: center; gap: 7px; }
@@ -343,9 +387,7 @@ html {
   margin: 0 auto;
   padding: 0 var(--pad);
   width: 100%;
-  pointer-events: none;
 }
-.hero__content a { pointer-events: auto; }
 
 .hero__eyebrow {
   font-family: var(--mono);
@@ -448,7 +490,7 @@ html {
     min-height: min(96svh, 820px);
     align-items: flex-start;
   }
-  .hero__content { padding-top: clamp(72px, 12vh, 118px); }
+  .hero__content { padding-top: clamp(52px, 9vh, 96px); }
   .hero::after {
     content: "";
     position: absolute;
@@ -461,6 +503,11 @@ html {
 
 /* ============ SECTIONS ============ */
 section { position: relative; z-index: 2; scroll-margin-top: 56px; }
+@media (max-width: 680px) {
+  /* Clear the taller two-row sticky header. */
+  section { scroll-margin-top: 96px; }
+  .role { scroll-margin-top: 116px; }
+}
 .band { padding: clamp(64px, 11vw, 130px) 0; }
 .band--alt { background: linear-gradient(180deg, transparent, rgba(18, 20, 31, 0.5) 12%, rgba(18, 20, 31, 0.5) 88%, transparent); }
 

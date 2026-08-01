@@ -68,14 +68,16 @@ export function SiteHeader() {
               key={l.id}
               href={`#${l.id}`}
               className={active === l.id ? "is-active" : undefined}
+              aria-current={active === l.id ? "true" : undefined}
             >
               {l.label}
             </a>
           ))}
         </nav>
         <div className="status">
-          {/* Live count, updated by the topology graph. */}
-          <span className="nodes-count">
+          {/* Live count, updated by the topology graph. Decorative flavor
+              that mutates ~1/s — kept away from assistive tech. */}
+          <span className="nodes-count" aria-hidden="true">
             NODES <b id="topo-node-count">0x00</b>
           </span>
           <span className="online">
