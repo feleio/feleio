@@ -139,12 +139,25 @@ export function TopologyGraph() {
 
       narrow = W <= 720
       if (narrow) {
-        // Confine the graph to a band beneath the headline.
-        boundsTop = H * 0.46
+        // Confine the graph to a band beneath the hero copy. The copy's real
+        // bottom edge sets the top bound — a fixed fraction breaks whenever
+        // font sizes or phone aspect ratios push the text lower.
+        let top = H * 0.46
+        const content = document.querySelector(".hero__content")
+        if (content) {
+          const cr = content.getBoundingClientRect()
+          const kr = canvas.getBoundingClientRect()
+          top = Math.max(top, cr.bottom - kr.top + 26)
+        }
+        boundsTop = Math.min(top, H - 200)
         boundsBot = H - 38
         cx = W * 0.5
         cy = (boundsTop + boundsBot) / 2
-        layoutScale = Math.max(0.5, Math.min(0.82, W / 620))
+        const bandH = boundsBot - boundsTop
+        layoutScale = Math.max(
+          0.42,
+          Math.min(0.82, Math.min(W / 620, bandH / 460))
+        )
       } else {
         boundsTop = 86
         boundsBot = H - 34
@@ -600,6 +613,8 @@ export function TopologyGraph() {
     resize()
     seedPositions()
     window.addEventListener("resize", onResize)
+    // The hero copy reflows when webfonts swap in; re-measure the band then.
+    document.fonts?.ready.then(() => onResize()).catch(() => {})
 
     if (reduceMotion) {
       renderStill()

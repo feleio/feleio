@@ -13,8 +13,8 @@ export function Hero() {
         </h1>
         <p className="hero__role">Senior Software Engineer</p>
         <p className="hero__tagline">
-          <b>Distributed Systems</b> · AI &amp; Agentic Engineering ·
-          High-Performance FinTech
+          <b>Distributed Systems</b>
+          {" · "}AI &amp; Agentic Engineering{" · "}High-Performance FinTech
         </p>
         <p className="hero__cap">
           {"// force-directed view of a 15-year topology"}

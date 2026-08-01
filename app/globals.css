@@ -426,7 +426,7 @@ html {
     min-height: min(96svh, 820px);
     align-items: flex-start;
   }
-  .hero__content { padding-top: clamp(86px, 17vh, 150px); }
+  .hero__content { padding-top: clamp(72px, 12vh, 118px); }
   .hero::after {
     content: "";
     position: absolute;
