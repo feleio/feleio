@@ -26,9 +26,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Font variables live on <html> so :root-level CSS vars can resolve them.
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${sora.variable} ${plexMono.variable} antialiased`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${sora.variable} ${plexMono.variable}`}
+    >
+      <body className="antialiased">
         {/* Mark JS as active before paint so the reveal system never flashes. */}
         <script
           dangerouslySetInnerHTML={{
