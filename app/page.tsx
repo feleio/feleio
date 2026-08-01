@@ -11,6 +11,9 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal"
 export default function Home() {
   return (
     <>
+      <a className="skip-link" href="#profile">
+        Skip to content
+      </a>
       <SiteHeader />
       <main id="top">
         <Hero />

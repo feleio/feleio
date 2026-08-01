@@ -615,16 +615,23 @@ export function TopologyGraph() {
       return null
     }
 
+    // Pointer listeners live on the hero section, not the canvas, so the
+    // overlaying copy stays selectable (no pointer-events:none hack) while
+    // repulsion and node clicks keep working across the whole hero.
+    const heroEl = (canvas.closest(".hero") as HTMLElement | null) ?? canvas
+
     function onMove(clientX: number, clientY: number) {
       if (!canvas) return
       const rect = canvas.getBoundingClientRect()
       mouse.x = clientX - rect.left
       mouse.y = clientY - rect.top
       mouse.active = true
-      canvas.style.cursor = hitNode(mouse.x, mouse.y) ? "pointer" : ""
+      heroEl.style.cursor = hitNode(mouse.x, mouse.y) ? "pointer" : ""
     }
     const onClick = (ev: MouseEvent) => {
       if (!canvas) return
+      // Real links in the hero (scroll cue etc.) win over node hits.
+      if (ev.target instanceof Element && ev.target.closest("a")) return
       const rect = canvas.getBoundingClientRect()
       const n = hitNode(ev.clientX - rect.left, ev.clientY - rect.top)
       if (!n) return
@@ -659,12 +666,12 @@ export function TopologyGraph() {
     const onTouchEnd = () => {
       mouse.active = false
     }
-    canvas.addEventListener("click", onClick)
+    heroEl.addEventListener("click", onClick)
     if (!reduceMotion) {
-      canvas.addEventListener("mousemove", onMouseMove)
-      canvas.addEventListener("mouseleave", onMouseLeave)
-      canvas.addEventListener("touchmove", onTouchMove, { passive: true })
-      canvas.addEventListener("touchend", onTouchEnd)
+      heroEl.addEventListener("mousemove", onMouseMove)
+      heroEl.addEventListener("mouseleave", onMouseLeave)
+      heroEl.addEventListener("touchmove", onTouchMove, { passive: true })
+      heroEl.addEventListener("touchend", onTouchEnd)
     }
 
     let raf = 0
@@ -743,11 +750,11 @@ export function TopologyGraph() {
       cancelAnimationFrame(raf)
       visObserver?.disconnect()
       window.removeEventListener("resize", onResize)
-      canvas.removeEventListener("click", onClick)
-      canvas.removeEventListener("mousemove", onMouseMove)
-      canvas.removeEventListener("mouseleave", onMouseLeave)
-      canvas.removeEventListener("touchmove", onTouchMove)
-      canvas.removeEventListener("touchend", onTouchEnd)
+      heroEl.removeEventListener("click", onClick)
+      heroEl.removeEventListener("mousemove", onMouseMove)
+      heroEl.removeEventListener("mouseleave", onMouseLeave)
+      heroEl.removeEventListener("touchmove", onTouchMove)
+      heroEl.removeEventListener("touchend", onTouchEnd)
     }
   }, [])
 
