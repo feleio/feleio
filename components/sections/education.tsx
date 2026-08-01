@@ -17,7 +17,7 @@ export function Education() {
   return (
     <section className="band band--alt" id="education" aria-labelledby="edu-label">
       <div className="wrap">
-        <p className="label" id="edu-label">
+        <p className="label reveal" id="edu-label">
           <span className="node-glyph" aria-hidden="true" />
           {"// EDUCATION"}
         </p>

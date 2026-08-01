@@ -26,7 +26,10 @@ export function Footer() {
             github.com/feleio
           </a>
         </div>
-        <p className="footer__sig">{year} · CHUN LOK LING · fele.io</p>
+        <p className="footer__sig">
+          <span className="prompt">$</span> uptime · 15y+ · © {year} CHUN LOK
+          LING · fele.io
+        </p>
       </div>
     </footer>
   )
