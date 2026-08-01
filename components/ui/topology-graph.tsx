@@ -239,6 +239,7 @@ export function TopologyGraph() {
     }
 
     const mouse = { x: -9999, y: -9999, active: false }
+    let hover: GNode | null = null
     let settle = 0
     let corePulse = 0
     let corePulseFired = false
@@ -486,6 +487,32 @@ export function TopologyGraph() {
         const col = heat > 0.04 ? TEAL : baseCol
 
         const pulse = isCore ? 1 + corePulse * 0.6 : 1
+
+        // Idle pulse rings advertise that role nodes are interactive.
+        if (!reduceMotion && settle >= 1 && n.type === "role") {
+          const ph = ((time + i * 0.9) % 4.2) / 4.2
+          if (ph < 0.45) {
+            const t = ph / 0.45
+            ctx.beginPath()
+            ctx.arc(n.x, n.y, n.r + t * n.r * 2.6, 0, Math.PI * 2)
+            ctx.strokeStyle = rgba(IRIS, (1 - t) * 0.28)
+            ctx.lineWidth = 1
+            ctx.stroke()
+          }
+        }
+
+        // Hover affordance: dashed ring slowly orbiting the hovered node.
+        if (hover === n) {
+          ctx.beginPath()
+          ctx.setLineDash([3, 4])
+          ctx.lineDashOffset = -time * 12
+          ctx.arc(n.x, n.y, n.r * pulse + 7, 0, Math.PI * 2)
+          ctx.strokeStyle = rgba(TEAL, 0.85)
+          ctx.lineWidth = 1
+          ctx.stroke()
+          ctx.setLineDash([])
+        }
+
         const haloA = isCore ? 0.2 + corePulse * 0.4 : heat * 0.5
         if (haloA > 0.01) {
           const hr = n.r * (isCore ? 4.5 : 3.2) * pulse
@@ -544,12 +571,27 @@ export function TopologyGraph() {
             ly = n.y
           }
           drawPill(lx, ly, tw, fontSize)
-          ctx.fillStyle =
-            heat > 0.1
+          const hovered = hover === n
+          ctx.fillStyle = hovered
+            ? rgba(TEXT, 1)
+            : heat > 0.1
               ? rgba(TEAL, Math.min(1, 0.55 + heat))
               : rgba(TEXT, labelA)
           ctx.textAlign = "left"
           ctx.fillText(n.label, lx, ly)
+          if (hovered) {
+            // Underline + a small hint so the click affordance is explicit.
+            ctx.beginPath()
+            ctx.moveTo(lx, ly + fontSize / 2 + 3)
+            ctx.lineTo(lx + tw, ly + fontSize / 2 + 3)
+            ctx.strokeStyle = rgba(TEAL, 0.7)
+            ctx.lineWidth = 1
+            ctx.stroke()
+            const hint = isCore ? "↳ top" : "↳ view role"
+            ctx.font = `500 10px ${monoFamily}, monospace`
+            ctx.fillStyle = rgba(TEAL, 0.75)
+            ctx.fillText(hint, lx, ly + fontSize / 2 + 15)
+          }
         }
       }
 
@@ -601,11 +643,15 @@ export function TopologyGraph() {
         target.classList.add("is-target")
       }
     }
-    const onMouseMove = (ev: MouseEvent) => onMove(ev.clientX, ev.clientY)
+    const onMouseMove = (ev: MouseEvent) => {
+      onMove(ev.clientX, ev.clientY)
+      hover = hitNode(mouse.x, mouse.y)
+    }
     const onMouseLeave = () => {
       mouse.active = false
       mouse.x = -9999
       mouse.y = -9999
+      hover = null
     }
     const onTouchMove = (ev: TouchEvent) => {
       if (ev.touches[0]) onMove(ev.touches[0].clientX, ev.touches[0].clientY)
@@ -669,14 +715,33 @@ export function TopologyGraph() {
     // The hero copy reflows when webfonts swap in; re-measure the band then.
     document.fonts?.ready.then(() => onResize()).catch(() => {})
 
+    // The O(n²) sim has no business running once the hero is off screen —
+    // the observer stops the loop on exit and resumes it seamlessly on entry
+    // (resetting `last` first so the resume frame doesn't get a huge dt).
+    let visObserver: IntersectionObserver | null = null
     if (reduceMotion) {
       renderStill()
     } else {
-      raf = requestAnimationFrame(frame)
+      const start = () => {
+        if (raf) return
+        last = performance.now()
+        raf = requestAnimationFrame(frame)
+      }
+      const stop = () => {
+        if (!raf) return
+        cancelAnimationFrame(raf)
+        raf = 0
+      }
+      visObserver = new IntersectionObserver((entries) => {
+        if (entries[0]?.isIntersecting) start()
+        else stop()
+      })
+      visObserver.observe(canvas)
     }
 
     return () => {
       cancelAnimationFrame(raf)
+      visObserver?.disconnect()
       window.removeEventListener("resize", onResize)
       canvas.removeEventListener("click", onClick)
       canvas.removeEventListener("mousemove", onMouseMove)

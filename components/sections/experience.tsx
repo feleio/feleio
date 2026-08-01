@@ -1,4 +1,26 @@
+import type { CSSProperties } from "react"
+
 import { roles } from "@/lib/content"
+
+// Per-role hover glow, echoing each node's color weight in the hero graph.
+const glow: Record<string, CSSProperties> = {
+  da: {
+    "--role-glow": "rgba(55, 224, 200, 0.45)",
+    "--role-glow-soft": "rgba(55, 224, 200, 0.14)",
+  } as CSSProperties,
+  bh: {
+    "--role-glow": "rgba(124, 140, 255, 0.5)",
+    "--role-glow-soft": "rgba(124, 140, 255, 0.14)",
+  } as CSSProperties,
+  ar: {
+    "--role-glow": "rgba(124, 140, 255, 0.32)",
+    "--role-glow-soft": "rgba(124, 140, 255, 0.10)",
+  } as CSSProperties,
+  tr: {
+    "--role-glow": "rgba(124, 140, 255, 0.5)",
+    "--role-glow-soft": "rgba(124, 140, 255, 0.14)",
+  } as CSSProperties,
+}
 
 export function Experience() {
   return (
@@ -14,6 +36,7 @@ export function Experience() {
               className={`role reveal${exp.compact ? " role--compact" : ""}`}
               key={exp.org}
               id={`role-${exp.id}`}
+              style={glow[exp.id]}
             >
               <div className="role__meta">
                 <span className="role__years">{exp.years}</span>

@@ -1,4 +1,5 @@
 import { readouts } from "@/lib/content"
+import { CountUp } from "@/components/ui/count-up"
 
 export function About() {
   return (
@@ -22,7 +23,7 @@ export function About() {
             {readouts.map((r) => (
               <div className="readout reveal" key={r.cap}>
                 <span className="fig">
-                  {r.fig}
+                  <CountUp value={r.fig} />
                   {r.em && <em>{r.em}</em>}
                 </span>
                 <span className="cap">{r.cap}</span>

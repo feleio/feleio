@@ -543,7 +543,19 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 @media (max-width: 760px) { .about__grid { grid-template-columns: 1fr; } }
 
 /* ---- EXPERIENCE ---- */
-.roles { display: grid; gap: 22px; }
+.roles { display: grid; gap: 22px; position: relative; }
+/* Timeline rail: visible only in the gaps between cards, so it reads as
+   connector segments linking the role dots — an echo of the graph edges. */
+.roles::before {
+  content: "";
+  position: absolute;
+  left: calc(clamp(22px, 4vw, 34px) + 4.5px);
+  top: 40px;
+  bottom: 60px;
+  width: 1px;
+  background: linear-gradient(180deg, var(--iris-line), var(--hair) 70%, transparent);
+}
+@media (max-width: 640px) { .roles::before { display: none; } }
 .role {
   position: relative;
   border: 1px solid var(--hair);
@@ -556,9 +568,10 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
   transition: border-color .35s ease, transform .35s ease, box-shadow .35s ease;
 }
 .role:hover {
-  border-color: var(--iris-line);
+  border-color: var(--role-glow, var(--iris-line));
   transform: translateY(-3px);
-  box-shadow: 0 0 0 1px var(--iris-soft), 0 24px 60px -30px rgba(124, 140, 255, 0.4);
+  box-shadow: 0 0 0 1px var(--role-glow-soft, var(--iris-soft)),
+    0 24px 60px -30px var(--role-glow, rgba(124, 140, 255, 0.4));
 }
 .role { scroll-margin-top: 84px; }
 /* Flash when reached by clicking its node in the hero graph. */
