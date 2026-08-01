@@ -34,6 +34,22 @@
   --maxw: 1080px;
   --pad: clamp(20px, 5vw, 48px);
   --t-radius: 14px;
+
+  /* Type scale: two mono sizes cover all metadata chrome; h2 for the
+     visible section headings. */
+  --fs-mono: 12px;    /* --t-dim stays AA at this size */
+  --fs-mono-lg: 13px;
+  --fs-h2: clamp(1.45rem, 3vw, 1.9rem);
+
+  /* Spacing scale — use for new rules; legacy px values migrate as touched. */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 16px;
+  --sp-4: 24px;
+  --sp-5: 32px;
+  --sp-6: 40px;
+  --sp-7: 52px;
+  --sp-8: 64px;
 }
 
 html { scroll-behavior: smooth; }
@@ -104,7 +120,7 @@ html {
   z-index: 100;
   transform: translateY(-300%);
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--fs-mono-lg);
   color: var(--t-text);
   background: var(--panel);
   border: 1px solid var(--iris);
@@ -122,7 +138,7 @@ html {
   z-index: 60;
   transform: translateY(-500%);
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--fs-mono-lg);
   color: var(--t-text);
   background: var(--panel);
   border: 1px solid var(--iris);
@@ -150,7 +166,7 @@ html {
   justify-content: space-between;
   gap: 16px;
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: var(--fs-mono);
   letter-spacing: 0.04em;
 }
 .brand { color: var(--t-text); font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
@@ -276,7 +292,7 @@ html {
 
 .hero__eyebrow {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: var(--fs-mono);
   color: var(--teal);
   letter-spacing: 0.06em;
   margin: 0 0 22px;
@@ -322,7 +338,7 @@ html {
 .hero__tagline b { color: var(--t-text); font-weight: 500; }
 .hero__cap {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-mono);
   color: var(--t-dim);
   margin: 30px 0 0;
   text-shadow: 0 2px 20px rgba(10, 11, 18, 0.9);
@@ -334,7 +350,7 @@ html {
   transform: translateX(-50%);
   z-index: 3;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-mono);
   letter-spacing: 0.12em;
   color: var(--t-dim);
   text-decoration: none;
@@ -387,24 +403,61 @@ html {
 }
 
 /* ============ SECTIONS ============ */
+/* Route line: the topology motif carried down the page, aligned with the
+   section label node-glyphs. Starts where the hero ends (top mirrors the
+   .hero min-height — keep in sync) and sits under section content. */
+main { position: relative; }
+main::before {
+  content: "";
+  position: absolute;
+  top: min(92vh, 860px);
+  bottom: 0;
+  left: max(calc((100% - var(--maxw)) / 2 + var(--pad) + 4px), calc(var(--pad) + 4px));
+  width: 1px;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--iris-line) 8%,
+    rgba(124, 140, 255, 0.14) 55%,
+    rgba(124, 140, 255, 0.1) 92%,
+    transparent
+  );
+  opacity: 0.6;
+}
+@media (max-width: 720px) { main::before { display: none; } }
+
 section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 @media (max-width: 680px) {
   /* Clear the taller two-row sticky header. */
   section { scroll-margin-top: 96px; }
   .role { scroll-margin-top: 116px; }
 }
-.band { padding: clamp(64px, 11vw, 130px) 0; }
+.band { padding: clamp(56px, 9vw, 104px) 0; }
 .band--alt { background: linear-gradient(180deg, transparent, rgba(18, 20, 31, 0.5) 12%, rgba(18, 20, 31, 0.5) 88%, transparent); }
 
 .label {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: var(--fs-mono);
   color: var(--iris);
   letter-spacing: 0.06em;
-  margin: 0 0 36px;
+  margin: 0 0 var(--sp-3);
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+/* Visible section heading — the label is the eyebrow, this carries the
+   weight. */
+.sec-title {
+  font-family: var(--disp);
+  font-weight: 600;
+  font-size: var(--fs-h2);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--t-text);
+  margin: 0 0 var(--sp-6);
 }
 .label::after {
   content: "";
@@ -471,7 +524,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
   letter-spacing: -0.02em;
 }
 .readout .fig em { color: var(--teal); font-style: normal; }
-.readout .cap { font-family: var(--mono); font-size: 12px; color: var(--t-muted); letter-spacing: 0.02em; }
+.readout .cap { font-family: var(--mono); font-size: var(--fs-mono); color: var(--t-muted); letter-spacing: 0.02em; }
 @media (max-width: 760px) { .about__grid { grid-template-columns: 1fr; } }
 
 /* ---- EXPERIENCE ---- */
@@ -526,7 +579,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 }
 .role__years {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--fs-mono-lg);
   font-weight: 500;
   color: var(--teal);
   letter-spacing: 0.02em;
@@ -535,15 +588,20 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 }
 .role__co {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-mono);
   color: var(--t-muted);
   padding-left: 24px;
   margin-top: 10px;
   display: block;
 }
 .role__title { font-weight: 600; font-size: clamp(1.18rem, 2.6vw, 1.45rem); letter-spacing: -0.015em; margin: 0; }
-.role__org { font-family: var(--mono); font-size: 13px; color: var(--iris); margin: 7px 0 0; }
-.role__team { font-family: var(--mono); font-size: 12.5px; color: var(--t-muted); margin: 2px 0 0; }
+.role__scope { color: var(--t-muted); font-size: 0.97rem; margin: 10px 0 0; }
+/* The role still running gets the live-teal dot on the timeline rail. */
+.role--current .role__meta::before {
+  background: var(--teal);
+  box-shadow: 0 0 0 4px var(--bg), 0 0 12px rgba(55, 224, 200, 0.7);
+}
+.role__org { font-family: var(--mono); font-size: var(--fs-mono-lg); color: var(--iris); margin: 7px 0 0; }
 .role__bullets { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 11px; }
 .role__bullets li {
   position: relative;
@@ -569,7 +627,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 }
 .tag {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-mono);
   color: var(--t-text);
   padding: 6px 13px 6px 24px;
   border: 1px solid var(--hair);
@@ -653,7 +711,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 }
 .cluster__head {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--t-muted);
@@ -669,7 +727,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 .cluster__nodes { display: flex; flex-wrap: wrap; gap: 8px; }
 .skill-node {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: var(--fs-mono);
   color: var(--t-text);
   padding: 7px 13px;
   border: 1px solid var(--hair);
@@ -707,7 +765,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
   border: 1.5px solid var(--iris);
   box-shadow: 0 0 0 4px var(--bg);
 }
-.edu__year { font-family: var(--mono); font-size: 13px; color: var(--teal); padding-left: 22px; }
+.edu__year { font-family: var(--mono); font-size: var(--fs-mono-lg); color: var(--teal); padding-left: 22px; }
 .edu__inst { font-weight: 600; font-size: 1.1rem; letter-spacing: -0.01em; margin: 0; }
 .edu__detail { color: var(--t-muted); margin: 6px 0 0; font-size: 0.96rem; }
 .edu__detail .hl { color: var(--iris); font-family: var(--mono); font-size: 0.85rem; }
@@ -783,7 +841,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 .connect__cta:hover .connect__arrow { transform: translate(2px, -2px); }
 .connect__alt {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--fs-mono-lg);
   color: var(--t-muted);
   text-decoration: none;
   transition: color .25s ease;
@@ -808,7 +866,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 .footer__links { display: flex; gap: 22px; flex-wrap: wrap; }
 .footer__links a {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--fs-mono-lg);
   color: var(--t-muted);
   text-decoration: none;
   display: inline-flex;
@@ -818,7 +876,7 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
 }
 .footer__links a:hover { color: var(--teal); }
 .footer__links svg { width: 16px; height: 16px; flex: none; }
-.footer__sig { font-family: var(--mono); font-size: 12.5px; color: var(--t-dim); letter-spacing: 0.04em; }
+.footer__sig { font-family: var(--mono); font-size: var(--fs-mono); color: var(--t-dim); letter-spacing: 0.04em; }
 .footer__sig .prompt { color: var(--teal); }
 
 /* ============ SCROLL REVEAL (progressive enhancement) ============ */

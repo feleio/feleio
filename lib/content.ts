@@ -14,6 +14,8 @@ export interface Role {
   title: string
   org: string
   team: string
+  /** One-line summary of the role's remit — the card's deck line. */
+  scope: string
   bullets: string[]
   tags: string[]
   /** Short skill labels drawn in the hero graph (may differ from tags). */
@@ -30,6 +32,7 @@ export const roles: Role[] = [
     title: "Senior Software Engineer",
     org: "Digital Asset",
     team: "Canton Network Utility Team",
+    scope: "Mission-critical backend utilities for institutional-grade DLT",
     bullets: [
       "Drive development of mission-critical backend utilities for institutional-grade DLT",
       "Built high-performance infrastructure using Scala and Daml",
@@ -46,6 +49,7 @@ export const roles: Role[] = [
     title: "Senior Software Engineer",
     org: "Babylon Health",
     team: "AI Engineering",
+    scope: "Scala microservices behind a global clinical platform",
     bullets: [
       "Designed scalable Scala and Akka-HTTP microservices for a global clinical platform",
       "Managed full-lifecycle deployments using Docker and Kubernetes",
@@ -64,7 +68,8 @@ export const roles: Role[] = [
     team: "",
     // TODO(chun): confirm or replace this line — placeholder based on Amber
     // Road's product domain, not your actual scope there.
-    bullets: ["Global trade management platform engineering"],
+    scope: "Global trade management platform engineering",
+    bullets: [],
     tags: [],
     graphSkills: [],
     compact: true,
@@ -76,6 +81,7 @@ export const roles: Role[] = [
     title: "Software Engineer",
     org: "Thomson Reuters",
     team: "",
+    scope: "Core components of the Global Market Data Network",
     bullets: [
       "Developed core components for the Global Market Data Network using C++",
       "Contributed to 14 major project releases through high-speed, reliable execution",
@@ -84,6 +90,23 @@ export const roles: Role[] = [
     graphSkills: ["C++"],
   },
 ]
+
+/**
+ * Tenure label derived from a "YYYY — YYYY|Present" range. Open-ended
+ * ranges round down ("3+ yrs") so the claim is always true regardless of
+ * start month.
+ */
+export function tenure(years: string): string {
+  const [from, to] = years.split("—").map((s) => s.trim())
+  const start = parseInt(from, 10)
+  if (!Number.isFinite(start)) return ""
+  if (/present/i.test(to)) {
+    const n = Math.max(1, new Date().getFullYear() - start - 1)
+    return `${n}+ yrs`
+  }
+  const n = Math.max(1, parseInt(to, 10) - start)
+  return n === 1 ? "1 yr" : `${n} yrs`
+}
 
 /**
  * graphSkills use short display labels; skillGroups use full names. This map

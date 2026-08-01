@@ -3,12 +3,15 @@ import { CountUp } from "@/components/ui/count-up"
 
 export function About() {
   return (
-    <section className="band" id="profile" aria-labelledby="profile-label">
+    <section className="band" id="profile" aria-labelledby="profile-title">
       <div className="wrap">
         <p className="label reveal" id="profile-label">
           <span className="node-glyph" aria-hidden="true" />
           {"// PROFILE"}
         </p>
+        <h2 className="sec-title reveal" id="profile-title">
+          Systems that can&rsquo;t afford to fail
+        </h2>
         <div className="about__grid">
           <p className="about__lede reveal">
             I am a high-execution software engineer specializing in building
