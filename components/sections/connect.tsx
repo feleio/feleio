@@ -2,18 +2,22 @@ import { GITHUB_URL, LINKEDIN_URL } from "@/lib/content"
 
 export function Connect() {
   return (
-    <section className="band" id="connect" aria-labelledby="connect-label">
+    <section className="band" id="connect" aria-labelledby="connect-title">
       <div className="wrap">
         <p className="label reveal" id="connect-label">
           <span className="node-glyph" aria-hidden="true" />
           {"// CONNECT"}
         </p>
+        <h2 className="sec-title reveal" id="connect-title">
+          Open a channel
+        </h2>
         <div className="connect reveal">
           <p className="connect__lede">
             <span className="prompt">$</span> open channel --to chun-lok-ling
           </p>
           <p className="connect__sub">
-            Fastest route into the network — say hello on LinkedIn.
+            Open to good conversations — distributed systems, agentic
+            engineering, hard backend problems. Fastest route in is LinkedIn.
           </p>
           <div className="connect__actions">
             <a

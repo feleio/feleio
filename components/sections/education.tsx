@@ -2,12 +2,15 @@ import { education } from "@/lib/content"
 
 export function Education() {
   return (
-    <section className="band band--alt" id="education" aria-labelledby="edu-label">
+    <section className="band band--alt" id="education" aria-labelledby="edu-title">
       <div className="wrap">
         <p className="label reveal" id="edu-label">
           <span className="node-glyph" aria-hidden="true" />
           {"// EDUCATION"}
         </p>
+        <h2 className="sec-title reveal" id="edu-title">
+          Foundations
+        </h2>
         <div className="edu">
           {education.map((edu) => (
             <div className="edu__row reveal" key={edu.inst}>
