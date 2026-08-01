@@ -56,6 +56,7 @@ export function TopologyGraph() {
       tx: number
       ty: number
       placed?: boolean
+      side?: number // narrow-screen label position: -1 above, 1 below
     }
     interface GEdge {
       a: GNode
@@ -124,8 +125,10 @@ export function TopologyGraph() {
     let cy = 0
     let layoutScale = 1
     let narrow = false
+    let hideSkills = false
     let boundsTop = 86
     let boundsBot = 0
+    const hidden = (n: GNode) => hideSkills && n.type === "skill"
 
     function resize() {
       if (!canvas || !ctx) return
@@ -147,10 +150,10 @@ export function TopologyGraph() {
         if (content) {
           const cr = content.getBoundingClientRect()
           const kr = canvas.getBoundingClientRect()
-          top = Math.max(top, cr.bottom - kr.top + 26)
+          top = Math.max(top, cr.bottom - kr.top + 14)
         }
         boundsTop = Math.min(top, H - 200)
-        boundsBot = H - 38
+        boundsBot = H - 30
         cx = W * 0.5
         cy = (boundsTop + boundsBot) / 2
         const bandH = boundsBot - boundsTop
@@ -158,25 +161,55 @@ export function TopologyGraph() {
           0.42,
           Math.min(0.82, Math.min(W / 620, bandH / 460))
         )
+        hideSkills = true
       } else {
         boundsTop = 86
         boundsBot = H - 34
         cx = W * 0.66
         cy = H * 0.55
         layoutScale = Math.max(0.62, Math.min(1.15, W / 1180))
+        hideSkills = false
       }
       seedTargets()
     }
 
     function seedTargets() {
-      core.tx = cx
-      core.ty = cy
-      const roleR = (narrow ? 118 : 150) * layoutScale
-      const skillR = (narrow ? 96 : 120) * layoutScale
-      const nRoles = model.roles.length
       nodes.forEach((n) => {
         n.placed = false
+        n.side = undefined
       })
+
+      if (narrow) {
+        // Composed constellation: core + roles hand-placed in an open diamond
+        // across the whole band. Labels stack above/below their node, so
+        // nothing depends on sideways space the phone doesn't have.
+        const padX = 30
+        const bx = (f: number) => padX + f * (W - padX * 2)
+        const by = (f: number) =>
+          boundsTop + 26 + f * (boundsBot - 24 - (boundsTop + 26))
+        core.tx = bx(0.46)
+        core.ty = by(0.48)
+        const spots: Record<string, [number, number, number]> = {
+          TR: [0.16, 0.14, -1],
+          DA: [0.76, 0.08, -1],
+          BH: [0.84, 0.68, 1],
+          AR: [0.22, 0.86, 1],
+        }
+        model.roles.forEach((role) => {
+          const rn = byKey[role.id]
+          const [fx, fy, side] = spots[role.id]
+          rn.tx = bx(fx)
+          rn.ty = by(fy)
+          rn.side = side
+        })
+        return
+      }
+
+      core.tx = cx
+      core.ty = cy
+      const roleR = 150 * layoutScale
+      const skillR = 120 * layoutScale
+      const nRoles = model.roles.length
       model.roles.forEach((role, i) => {
         const ang = -Math.PI / 2 + (i / nRoles) * Math.PI * 2 + 0.35
         const rn = byKey[role.id]
@@ -193,12 +226,6 @@ export function TopologyGraph() {
           sn.placed = true
         })
       })
-      // Squash horizontally on mobile so labels have room before the edges.
-      if (narrow) {
-        nodes.forEach((n) => {
-          n.tx = cx + (n.tx - cx) * 0.8
-        })
-      }
     }
 
     function seedPositions() {
@@ -241,8 +268,11 @@ export function TopologyGraph() {
     }
 
     function spawnPacket() {
-      if (!edges.length) return
-      const e = edges[(rand() * edges.length) | 0]
+      const pool = hideSkills
+        ? edges.filter((e) => !hidden(e.a) && !hidden(e.b))
+        : edges
+      if (!pool.length) return
+      const e = pool[(rand() * pool.length) | 0]
       if (e.t < 1) return
       packets.push({
         e,
@@ -309,6 +339,7 @@ export function TopologyGraph() {
 
       for (let ei = 0; ei < edges.length; ei++) {
         const e = edges[ei]
+        if (hidden(e.a) || hidden(e.b)) continue
         const dx = e.b.x - e.a.x
         const dy = e.b.y - e.a.y
         const dist = Math.sqrt(dx * dx + dy * dy) || 0.01
@@ -324,8 +355,10 @@ export function TopologyGraph() {
 
       for (let i = 0; i < nodes.length; i++) {
         const a = nodes[i]
+        if (hidden(a)) continue
         for (let j = i + 1; j < nodes.length; j++) {
           const b = nodes[j]
+          if (hidden(b)) continue
           const ddx = a.x - b.x
           const ddy = a.y - b.y
           let d2 = ddx * ddx + ddy * ddy
@@ -344,6 +377,7 @@ export function TopologyGraph() {
 
       for (let n2 = 0; n2 < nodes.length; n2++) {
         const nd = nodes[n2]
+        if (hidden(nd)) continue
         nd.vx += (nd.tx - nd.x) * anchorPull
         nd.vy += (nd.ty - nd.y) * anchorPull
 
@@ -406,6 +440,7 @@ export function TopologyGraph() {
 
       for (let ei = 0; ei < edges.length; ei++) {
         const e = edges[ei]
+        if (hidden(e.a) || hidden(e.b)) continue
         e.t = Math.min(1, e.t + 0.02)
         const prog = reduceMotion ? 1 : e.t
         const ax = e.a.x
@@ -433,9 +468,24 @@ export function TopologyGraph() {
 
       drawPackets()
 
+      // Soft dark pill behind a label so edges never strike through the text.
+      const drawPill = (lx: number, ly: number, tw: number, fs: number) => {
+        const pad = 7
+        const h = fs + 8
+        ctx.fillStyle = "rgba(8, 9, 15, 0.78)"
+        ctx.beginPath()
+        if (typeof ctx.roundRect === "function") {
+          ctx.roundRect(lx - pad, ly - h / 2, tw + pad * 2, h, h / 2)
+        } else {
+          ctx.rect(lx - pad, ly - h / 2, tw + pad * 2, h)
+        }
+        ctx.fill()
+      }
+
       const showSkillLabels = W > 560
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i]
+        if (hidden(n)) continue
         const heat = n.heat
         const isCore = n.type === "core"
         const baseCol = isCore ? IRIS : n.type === "role" ? IRIS : TEAL
@@ -483,28 +533,37 @@ export function TopologyGraph() {
             : n.type === "role"
               ? 0.78
               : Math.min(0.9, 0.3 + heat)
+          ctx.textBaseline = "middle"
+          const tw = ctx.measureText(n.label).width
+          let lx: number
+          let ly: number
+          if (narrow && !isCore && n.side) {
+            // Stacked label, centered on the node, clamped to the viewport.
+            lx = Math.min(Math.max(n.x - tw / 2, 8), W - tw - 8)
+            ly = n.y + n.side * (n.r * pulse + 16)
+          } else {
+            const gap = n.r * pulse + 8
+            lx =
+              n.x + gap + tw > W - 12
+                ? Math.max(6, n.x - gap - tw) // flip left of the node
+                : n.x + gap
+            ly = n.y
+          }
+          drawPill(lx, ly, tw, fontSize)
           ctx.fillStyle =
             heat > 0.1
               ? rgba(TEAL, Math.min(1, 0.55 + heat))
               : rgba(TEXT, labelA)
-          ctx.textBaseline = "middle"
-          const gap = n.r * pulse + 8
-          const tw = ctx.measureText(n.label).width
-          if (n.x + gap + tw > W - 12) {
-            // Flip to the left of the node, clamped so it never runs off-screen.
-            ctx.textAlign = "right"
-            ctx.fillText(n.label, Math.max(tw + 6, n.x - gap), n.y)
-          } else {
-            ctx.textAlign = "left"
-            ctx.fillText(n.label, n.x + gap, n.y)
-          }
+          ctx.textAlign = "left"
+          ctx.fillText(n.label, lx, ly)
         }
       }
 
       if (countEl && (time | 0) !== lastCountFrame) {
         lastCountFrame = time | 0
-        const lit = nodes.filter((n) => n.heat > 0.05).length
-        const hex = nodes.length.toString(16).toUpperCase().padStart(2, "0")
+        const vis = nodes.filter((n) => !hidden(n))
+        const lit = vis.filter((n) => n.heat > 0.05).length
+        const hex = vis.length.toString(16).toUpperCase().padStart(2, "0")
         countEl.innerHTML = "0x" + hex + (lit ? " <b>·" + lit + " hot</b>" : "")
       }
     }
