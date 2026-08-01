@@ -14,12 +14,12 @@ export function About() {
         </h2>
         <div className="about__grid">
           <p className="about__lede reveal">
-            I am a high-execution software engineer specializing in building
-            robust, high-performance systems across FinTech, HealthTech, and
-            Blockchain.{" "}
+            Fifteen years of backend engineering across FinTech, HealthTech,
+            and Blockchain — distributed ledgers at Digital Asset, clinical
+            platforms at Babylon Health, market data at Thomson Reuters.{" "}
             <span className="soft">
-              I thrive in fast-paced environments where technical complexity
-              meets the need for rapid, pragmatic delivery.
+              High-performance systems, delivered at the pace the business
+              needs.
             </span>
           </p>
           <div className="readouts">

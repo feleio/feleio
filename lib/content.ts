@@ -33,11 +33,11 @@ export const roles: Role[] = [
     org: "Digital Asset",
     team: "Canton Network Utility Team",
     scope: "Mission-critical backend utilities for institutional-grade DLT",
+    // TODO(chun): real numbers would make these land — how many utilities,
+    // what scale/SLA the Canton Network components run at.
     bullets: [
-      "Drive development of mission-critical backend utilities for institutional-grade DLT",
-      "Built high-performance infrastructure using Scala and Daml",
-      "Built foundational distributed ledger components for the Canton Network",
-      "Delivered secure, production-ready code for high-integrity systems",
+      "Build foundational distributed ledger components for the Canton Network in Scala and Daml",
+      "Deliver secure, production-ready code for high-integrity institutional systems",
     ],
     tags: ["Scala", "Daml", "DLT"],
     graphSkills: ["Scala", "Daml", "DLT"],
@@ -50,11 +50,12 @@ export const roles: Role[] = [
     org: "Babylon Health",
     team: "AI Engineering",
     scope: "Scala microservices behind a global clinical platform",
+    // TODO(chun): platform scale would strengthen this — users served,
+    // request volume, markets/regions live.
     bullets: [
-      "Designed scalable Scala and Akka-HTTP microservices for a global clinical platform",
-      "Managed full-lifecycle deployments using Docker and Kubernetes",
-      "Built robust backend microservices for global chatbot platforms",
-      "Partnered with clinical teams to translate complex requirements into high-performance code",
+      "Designed Scala and Akka-HTTP microservices powering global clinical and chatbot platforms",
+      "Owned full-lifecycle deployments with Docker and Kubernetes",
+      "Partnered with clinical teams to turn complex medical requirements into high-performance code",
     ],
     tags: ["Scala", "Akka-HTTP", "Java", "Docker", "Kubernetes"],
     graphSkills: ["Scala", "Akka-HTTP", "Java", "Docker", "K8s"],
@@ -82,9 +83,11 @@ export const roles: Role[] = [
     org: "Thomson Reuters",
     team: "",
     scope: "Core components of the Global Market Data Network",
+    // TODO(chun): market-data throughput or latency figures would
+    // strengthen this if you have them.
     bullets: [
-      "Developed core components for the Global Market Data Network using C++",
-      "Contributed to 14 major project releases through high-speed, reliable execution",
+      "Developed core C++ components for the Global Market Data Network",
+      "Shipped across 14 major project releases with high-speed, reliable execution",
     ],
     tags: ["C++"],
     graphSkills: ["C++"],
@@ -137,7 +140,7 @@ export const skillUsage: Record<string, Role["id"][]> = (() => {
 export const readouts = [
   { fig: 15, em: "+", cap: "Years Experience" },
   { fig: 3, em: "", cap: "Industries" },
-  { fig: 4, em: "", cap: "Companies" },
+  { fig: 14, em: "", cap: "Major Releases" },
 ]
 
 export const skillGroups = [

@@ -17,7 +17,7 @@ const plexMono = IBM_Plex_Mono({
 
 const TITLE = "Chun Lok Ling — Senior Software Engineer"
 const DESCRIPTION =
-  "Senior Software Engineer at Digital Asset. 15+ years building distributed ledgers and high-performance financial systems — a force-directed view of a 15-year topology."
+  "Distributed systems engineer — 15+ years building distributed ledgers, clinical platforms, and high-performance market-data infrastructure. Senior Software Engineer at Digital Asset."
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://fele.io"),

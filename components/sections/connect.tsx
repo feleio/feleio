@@ -16,7 +16,8 @@ export function Connect() {
             <span className="prompt">$</span> open channel --to chun-lok-ling
           </p>
           <p className="connect__sub">
-            Fastest route into the network — say hello on LinkedIn.
+            Open to good conversations — distributed systems, agentic
+            engineering, hard backend problems. Fastest route in is LinkedIn.
           </p>
           <div className="connect__actions">
             <a
