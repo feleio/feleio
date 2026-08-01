@@ -1,54 +1,4 @@
-const experiences = [
-  {
-    id: "da",
-    years: "2022 — Present",
-    title: "Senior Software Engineer",
-    org: "Digital Asset",
-    team: "Canton Network Utility Team",
-    bullets: [
-      "Drive development of mission-critical backend utilities for institutional-grade DLT",
-      "Built high-performance infrastructure using Scala and Daml",
-      "Built foundational distributed ledger components for the Canton Network",
-      "Delivered secure, production-ready code for high-integrity systems",
-    ],
-    tags: ["Scala", "Daml", "DLT"],
-  },
-  {
-    id: "bh",
-    years: "2016 — 2022",
-    title: "Senior Software Engineer",
-    org: "Babylon Health",
-    team: "AI Engineering",
-    bullets: [
-      "Designed scalable Scala and Akka-HTTP microservices for a global clinical platform",
-      "Managed full-lifecycle deployments using Docker and Kubernetes",
-      "Built robust backend microservices for global chatbot platforms",
-      "Partnered with clinical teams to translate complex requirements into high-performance code",
-    ],
-    tags: ["Scala", "Akka-HTTP", "Java", "Docker", "Kubernetes"],
-  },
-  {
-    id: "ar",
-    years: "2015 — 2016",
-    title: "Senior Software Engineer",
-    org: "Amber Road",
-    team: "",
-    bullets: [] as string[],
-    tags: [] as string[],
-  },
-  {
-    id: "tr",
-    years: "2010 — 2014",
-    title: "Software Engineer",
-    org: "Thomson Reuters",
-    team: "",
-    bullets: [
-      "Developed core components for the Global Market Data Network using C++",
-      "Contributed to 14 major project releases through high-speed, reliable execution",
-    ],
-    tags: ["C++"],
-  },
-]
+import { roles } from "@/lib/content"
 
 export function Experience() {
   return (
@@ -59,8 +9,12 @@ export function Experience() {
           {"// EXPERIENCE"}
         </p>
         <div className="roles">
-          {experiences.map((exp, i) => (
-            <article className="role reveal" key={exp.org} id={`role-${exp.id}`}>
+          {roles.map((exp, i) => (
+            <article
+              className={`role reveal${exp.compact ? " role--compact" : ""}`}
+              key={exp.org}
+              id={`role-${exp.id}`}
+            >
               <div className="role__meta">
                 <span className="role__years">{exp.years}</span>
                 <span className="role__co">

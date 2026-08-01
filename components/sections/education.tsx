@@ -1,17 +1,4 @@
-const education = [
-  {
-    year: "2007 — 2010",
-    inst: "The Hong Kong University of Science and Technology",
-    detail: "Bachelor's Degree, Computer Science",
-    highlight: "· First Class Honours",
-  },
-  {
-    year: "2009",
-    inst: "University of Southampton",
-    detail: "Exchange Programme, Computer Science",
-    highlight: "",
-  },
-]
+import { education } from "@/lib/content"
 
 export function Education() {
   return (

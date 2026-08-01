@@ -4,6 +4,7 @@ import { About } from "@/components/sections/about"
 import { Experience } from "@/components/sections/experience"
 import { Skills } from "@/components/sections/skills"
 import { Education } from "@/components/sections/education"
+import { Connect } from "@/components/sections/connect"
 import { Footer } from "@/components/sections/footer"
 import { ScrollReveal } from "@/components/ui/scroll-reveal"
 
@@ -17,6 +18,7 @@ export default function Home() {
         <Experience />
         <Skills />
         <Education />
+        <Connect />
       </main>
       <Footer />
       <ScrollReveal />

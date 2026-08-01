@@ -1,17 +1,4 @@
-const skillGroups = [
-  {
-    title: "Languages",
-    skills: ["Scala", "Java", "TypeScript", "C++", "Python"],
-  },
-  {
-    title: "Infrastructure",
-    skills: ["Docker", "Kubernetes", "CI/CD"],
-  },
-  {
-    title: "Frameworks",
-    skills: ["Akka-HTTP", "fs2", "React", "Daml"],
-  },
-]
+import { skillGroups } from "@/lib/content"
 
 export function Skills() {
   return (

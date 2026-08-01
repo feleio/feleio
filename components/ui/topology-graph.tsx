@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react"
 
+import { roles } from "@/lib/content"
+
 /**
  * The signature: a force-directed view of a 15-year career.
  * A real spring/charge simulation — a central fele.io core, role nodes, and
@@ -65,23 +67,15 @@ export function TopologyGraph() {
     }
 
     const model = {
-      roles: [
-        { id: "DA", label: "Digital Asset", skills: ["Scala", "Daml", "DLT"] },
-        {
-          id: "BH",
-          label: "Babylon Health",
-          skills: ["Scala", "Akka-HTTP", "Java", "Docker", "K8s"],
-        },
-        { id: "AR", label: "Amber Road", skills: [] as string[] },
-        { id: "TR", label: "Thomson Reuters", skills: ["C++"] },
-      ],
+      roles: roles.map((r) => ({
+        id: r.graphId,
+        label: r.org,
+        skills: r.graphSkills,
+      })),
     }
-    const roleAnchor: Record<string, string> = {
-      DA: "role-da",
-      BH: "role-bh",
-      AR: "role-ar",
-      TR: "role-tr",
-    }
+    const roleAnchor: Record<string, string> = Object.fromEntries(
+      roles.map((r) => [r.graphId, `role-${r.id}`])
+    )
 
     const nodes: GNode[] = []
     const edges: GEdge[] = []
