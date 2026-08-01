@@ -1,8 +1,4 @@
-const readouts = [
-  { fig: "15", em: "+", cap: "Years Experience" },
-  { fig: "4", em: "", cap: "Industries" },
-  { fig: "6", em: "", cap: "Companies" },
-]
+import { readouts } from "@/lib/content"
 
 export function About() {
   return (

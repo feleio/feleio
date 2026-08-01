@@ -296,6 +296,28 @@ html {
   animation: t-blink 2.4s ease-in-out infinite;
 }
 @keyframes t-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.topbar__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border: 1px solid rgba(55, 224, 200, 0.35);
+  border-radius: 100px;
+  color: var(--teal);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: border-color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+.topbar__cta svg { width: 13px; height: 13px; flex: none; }
+.topbar__cta:hover {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  box-shadow: 0 0 18px -6px var(--teal);
+}
+@media (max-width: 680px) {
+  .topbar__cta { padding: 6px 9px; }
+  .topbar__cta-label { display: none; }
+}
 
 /* ============ HERO / GRAPH ============ */
 .hero {
@@ -633,6 +655,9 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
   .role__meta::before { display: none; }
   .role__years, .role__co { padding-left: 0; }
 }
+/* Short-tenure cards: tighter, so sparse content reads as intentional. */
+.role--compact { padding: clamp(16px, 3vw, 24px) clamp(22px, 4vw, 34px); }
+.role--compact .role__bullets { margin-top: 12px; }
 
 /* ---- SKILLS ---- */
 .clusters {
@@ -712,6 +737,79 @@ section { position: relative; z-index: 2; scroll-margin-top: 56px; }
   .edu__row::before { display: none; }
   .edu__year { padding-left: 0; }
 }
+
+/* ---- CONNECT ---- */
+.connect {
+  border: 1px solid var(--hair);
+  background: linear-gradient(165deg, var(--panel), var(--panel-2));
+  border-radius: var(--t-radius);
+  padding: clamp(30px, 6vw, 56px);
+  position: relative;
+  overflow: hidden;
+}
+.connect::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--iris), var(--teal));
+  opacity: 0.8;
+}
+.connect__lede {
+  font-family: var(--mono);
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  font-weight: 500;
+  color: var(--t-text);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.connect__lede .prompt { color: var(--teal); }
+.connect__sub {
+  color: var(--t-muted);
+  font-size: clamp(0.98rem, 2vw, 1.08rem);
+  margin: 12px 0 0;
+  max-width: 46ch;
+}
+.connect__actions {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.connect__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--t-text);
+  text-decoration: none;
+  padding: 15px 26px;
+  border-radius: 12px;
+  border: 1px solid var(--iris-line);
+  background: linear-gradient(160deg, rgba(124, 140, 255, 0.10), rgba(55, 224, 200, 0.06));
+  transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease;
+}
+.connect__cta svg { width: 17px; height: 17px; flex: none; color: var(--iris); transition: color .3s ease; }
+.connect__cta .connect__arrow { color: var(--teal); transition: transform .3s ease; }
+.connect__cta:hover {
+  border-color: var(--teal);
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px var(--teal-soft), 0 20px 50px -20px rgba(55, 224, 200, 0.45);
+}
+.connect__cta:hover svg { color: var(--teal); }
+.connect__cta:hover .connect__arrow { transform: translate(2px, -2px); }
+.connect__alt {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--t-muted);
+  text-decoration: none;
+  transition: color .25s ease;
+}
+.connect__alt:hover { color: var(--teal); }
 
 /* ---- FOOTER ---- */
 .site-footer {

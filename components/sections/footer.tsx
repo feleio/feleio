@@ -1,3 +1,5 @@
+import { GITHUB_URL, LINKEDIN_URL } from "@/lib/content"
+
 export function Footer() {
   const year = new Date().getFullYear()
 
@@ -6,7 +8,7 @@ export function Footer() {
       <div className="wrap footer__inner">
         <div className="footer__links">
           <a
-            href="https://www.linkedin.com/in/chun-lok-ling-195a923b"
+            href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -16,7 +18,7 @@ export function Footer() {
             linkedin.com/in/chun-lok-ling
           </a>
           <a
-            href="https://github.com/feleio"
+            href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
           >
